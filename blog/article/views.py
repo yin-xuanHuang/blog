@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models.query_utils import Q
 from article.models import Article, Comment
-
+from django.contrib.auth.decorators import login_required
+from main.views import admin_required
 from article.forms import ArticleForm
 
 def article(request):
@@ -18,6 +19,7 @@ def article(request):
     context = {'itemList':itemList}
     return render(request, 'article/article.html', context)
 
+@admin_required
 def articleCreate(request):
     '''
     Create a new article instance
@@ -50,6 +52,7 @@ def articleRead(request, articleId):
     }
     return render(request, 'article/articleRead.html', context)
 
+@admin_required
 def articleUpdate(request, articleId):
     '''
     Update the article instance:
@@ -71,6 +74,7 @@ def articleUpdate(request, articleId):
     messages.success(request, '文章已修改') 
     return redirect('article:articleRead', articleId=articleId)
 
+@admin_required
 def articleDelete(request, articleId):
     '''
     Delete the article instance:
@@ -109,6 +113,7 @@ def articleLike(request, articleId):
         article.likes.add(request.user)
     return articleRead(request, articleId)
 
+@login_required
 def commentCreate(request, articleId):
     '''
     Create a comment for an article:
